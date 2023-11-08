@@ -3,7 +3,7 @@ const Post = require("../models/post.model");
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find();
-    res.status(200).send({ message: "Posts found", post: posts });
+    res.status(200).send({ message: "Posts found", posts: posts });
   } catch (error) {
     res.status(500).send({ message: "Internal server error", error });
   }
@@ -13,7 +13,7 @@ const getSingleUserPosts = async (req, res) => {
     try {
         const id = req.userId
         const singlePost = await Note.find({_id: id});
-        res.status(200).send({ message: "Note found", singleNotes });
+        res.status(200).send({ message: "Note found", singlePost });
     } catch (error) {
         res.status(500).send({ message: "Internal server error", error });
     }
@@ -22,6 +22,7 @@ const getSingleUserPosts = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const { description, media } = req.body;
+    console.log(req.userId)
     const newPost = new Post({
       description,
       media,
