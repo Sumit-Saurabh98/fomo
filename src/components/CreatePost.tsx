@@ -9,7 +9,8 @@ import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
 import { createPost } from "@/actions/post.action";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import Image from "next/image";
 
 function CreatePost() {
   const { user } = useUser();
@@ -17,6 +18,7 @@ function CreatePost() {
   const [imageUrl, setImageUrl] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [previewImage, setPreviewImage] = useState("")
 
   const handleSubmit = async () => {
     if (!content.trim() && !imageUrl) return;
@@ -57,9 +59,22 @@ function CreatePost() {
             />
           </div>
 
+          {showImageUpload && (
+            <div className="mt-4">
+              <Image src={previewImage} width={400} height={400} alt="Preview" className="w-full" />
+            </div>
+          )}
+
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
-              <CldUploadWidget signatureEndpoint='/api/cloudinary'>
+              <CldUploadWidget
+                signatureEndpoint="/api/cloudinary"
+                onSuccess={(result) => {
+                  const secureUrl = (result.info as CloudinaryUploadWidgetInfo)?.secure_url;
+                  setImageUrl(secureUrl); 
+                  setPreviewImage(secureUrl);
+                }}
+              >
                 {({ open }) => {
                   return (
                     <Button
@@ -69,8 +84,8 @@ function CreatePost() {
                       className="text-muted-foreground hover:text-primary"
                       disabled={isPosting}
                       onClick={() => {
-                        open()
-                        setShowImageUpload(!showImageUpload)
+                        open();
+                        setShowImageUpload(!showImageUpload);
                       }}
                     >
                       <ImageIcon className="size-4 mr-2" />
