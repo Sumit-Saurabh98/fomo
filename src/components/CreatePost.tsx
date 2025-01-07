@@ -61,7 +61,7 @@ function CreatePost() {
 
           {showImageUpload && (
             <div className="mt-4">
-              <Image src={previewImage} width={400} height={400} alt="Preview" className="w-full" />
+              <Image src={previewImage} width={200} height={200} alt="Preview" className="w-full" />
             </div>
           )}
 
