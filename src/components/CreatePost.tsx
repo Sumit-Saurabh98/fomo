@@ -8,8 +8,8 @@ import { Textarea } from "./ui/textarea";
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
-import { createPost } from "@/actions/post.sction";
-import ImageUpload from "./ImageUpload";
+import { createPost } from "@/actions/post.action";
+import { CldUploadWidget } from "next-cloudinary";
 
 function CreatePost() {
   const { user } = useUser();
@@ -57,32 +57,28 @@ function CreatePost() {
             />
           </div>
 
-          {(showImageUpload || imageUrl) && (
-            <div className="border rounded-lg p-4">
-              <ImageUpload
-                endpoint="postImage"
-                value={imageUrl}
-                onChange={(url) => {
-                  setImageUrl(url);
-                  if (!url) setShowImageUpload(false);
-                }}
-              />
-            </div>
-          )}
-
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-primary"
-                onClick={() => setShowImageUpload(!showImageUpload)}
-                disabled={isPosting}
-              >
-                <ImageIcon className="size-4 mr-2" />
-                Photo
-              </Button>
+              <CldUploadWidget signatureEndpoint='/api/cloudinary'>
+                {({ open }) => {
+                  return (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-primary"
+                      disabled={isPosting}
+                      onClick={() => {
+                        open()
+                        setShowImageUpload(!showImageUpload)
+                      }}
+                    >
+                      <ImageIcon className="size-4 mr-2" />
+                      Upload an Image
+                    </Button>
+                  );
+                }}
+              </CldUploadWidget>
             </div>
             <Button
               className="flex items-center"
